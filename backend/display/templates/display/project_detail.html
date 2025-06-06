@@ -18,28 +18,55 @@
                 <label class="form-label fw-semibold text-muted-custom">Description</label>
                 <p class="text-muted-custom">{{ project.description|linebreaksbr }}</p>
             </div>
+
+            {% comment %} <div class="mb-4">
+                <label class="form-label fw-semibold text-muted-custom">Assigned Developer</label>
+                <p class="text-muted-custom">{{ project.assigned_developer|linebreaksbr }}</p>
+            </div>  {% endcomment %}
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-muted-custom">Deadline</label>
+                <p class="text-muted-custom">{{ project.deadline|linebreaksbr }}</p>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-muted-custom">Current Status</label>
+                <p class="text-muted-custom">{{ project.current_status|linebreaksbr }}</p>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-muted-custom">Estimated Budget</label>
+                <p class="text-muted-custom">{{ project.estimated_budget|linebreaksbr }}</p>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-muted-custom">Current Budget</label>
+                <p class="text-muted-custom">{{ project.current_budget|linebreaksbr }}</p>
+            </div>
             {% if is_admin %}
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-muted-custom">Handler</label>
+                    <p class="text-muted-custom"><i class="bi bi-person me-1"></i>{{ project.user.username }}</p>
+                </div>
+                {% if project.assigned_developer %}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-muted-custom">Assigned Developer</label>
+                        <p class="text-muted-custom"><i class="bi bi-person-gear me-1"></i>{{ project.assigned_developer.username }}</p>
+                    </div>
+                {% endif %}
+
+            {% elif is_developer %}
                 <div class="mb-4">
                     <label class="form-label fw-semibold text-muted-custom">Manager</label>
                     <p class="text-muted-custom"><i class="bi bi-person me-1"></i>{{ project.user.username }}</p>
                 </div>
+            {% else %}
+                {% if project.assigned_developer %}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-muted-custom">Assigned Developer</label>
+                        <p class="text-muted-custom"><i class="bi bi-person-gear me-1"></i>{{ project.assigned_developer.username }}</p>
+                    </div>
+                {% endif %}
             {% endif %}
-            <div class="mb-4">
-                <label class="form-label fw-semibold text-muted-custom">Deadline:</label>
-                <p class="text-muted-custom">{{ project.deadline|linebreaksbr }}</p>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-semibold text-muted-custom">Current Status:</label>
-                <p class="text-muted-custom">{{ project.current_status|linebreaksbr }}</p>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-semibold text-muted-custom">Estimated Budget:</label>
-                <p class="text-muted-custom">{{ project.estimated_budget|linebreaksbr }}</p>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-semibold text-muted-custom">Current Budget:</label>
-                <p class="text-muted-custom">{{ project.current_budget|linebreaksbr }}</p>
-            </div>
+
+
             {% if project.created_at %}
                 <div class="mb-4">
                     <label class="form-label fw-semibold text-muted-custom">Created On</label>
@@ -49,11 +76,11 @@
             <!-- Add more fields if your Project model has additional attributes -->
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                 <a href="{% url 'display:project_list' %}" class="btn btn-outline-secondary me-md-2">Back</a>
-                <a href="{% url 'display:project_update' project.pk %}" class="btn btn-outline-warning me-md-2">Edit</a>
-                <!-- delete view -->
-                <a href="{% url 'display:project_delete' project.pk %}" class="btn btn-outline-danger">Delete</a>
+                {% if not is_developer %}
+                    <a href="{% url 'display:project_update' project.pk %}" class="btn btn-outline-warning me-md-2">Edit</a>
+                    <a href="{% url 'display:project_delete' project.pk %}" class="btn btn-outline-danger">Delete</a>
+                {% endif %}
             </div>
-            
         </div>
     </div>
 </div>
