@@ -1,0 +1,11 @@
+Django
+djangorestframework
+langchain
+openai
+faiss-cpu
+tiktoken
+langchain-community
+langchain-openai
+
+
+
