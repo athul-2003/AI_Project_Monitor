@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import RegisterForm, LoginForm, ProjectForm
 from projects.models import Project
+from django.contrib import messages
 
 def register_view(request):
     if request.method == 'POST':
@@ -14,6 +15,7 @@ def register_view(request):
             user.save()
             return redirect('display:login')
     else:
+
         form = RegisterForm()
     return render(request, 'display/register.html', {'form': form})
 
@@ -83,3 +85,41 @@ def project_detail_view(request, pk):
         # Regular users can only view their own projects
         project = get_object_or_404(Project, pk=pk, user=request.user)
     return render(request, 'display/project_detail.html', {'project': project, 'is_admin': is_admin,})
+
+@login_required
+def project_update_view(request, pk):
+    is_admin = request.user.is_superuser
+    if is_admin:
+        project = get_object_or_404(Project, pk=pk)
+    else:
+        project = get_object_or_404(Project, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('display:project_detail', pk=project.pk)
+    else:
+        form = ProjectForm(instance=project)
+
+    return render(request, 'display/project_update.html', {'form': form, 'project': project, 'is_admin': is_admin})
+
+
+@login_required
+def project_delete_view(request, pk):
+    is_admin = request.user.is_superuser
+    if is_admin:
+        project = get_object_or_404(Project, pk=pk)
+    else:
+        project = get_object_or_404(Project, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        project_name = project.name  #to store name for message
+        project.delete()
+        messages.success(request, f"Project '{project_name}' has been deleted successfully.")
+        return redirect('display:project_list')
+    # If GET request, render a confirmation page
+    return render(request, 'display/project_delete_confirm.html', {'project': project, 'is_admin': is_admin})
+
+
+

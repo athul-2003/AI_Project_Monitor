@@ -49,8 +49,11 @@
             <!-- Add more fields if your Project model has additional attributes -->
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                 <a href="{% url 'display:project_list' %}" class="btn btn-outline-secondary me-md-2">Back</a>
-                
+                <a href="{% url 'display:project_update' project.pk %}" class="btn btn-outline-warning me-md-2">Edit</a>
+                <!-- delete view -->
+                <a href="{% url 'display:project_delete' project.pk %}" class="btn btn-outline-danger">Delete</a>
             </div>
+            
         </div>
     </div>
 </div>
