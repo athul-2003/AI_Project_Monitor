@@ -80,6 +80,14 @@
                     <a href="{% url 'display:project_update' project.pk %}" class="btn btn-outline-warning me-md-2">Edit</a>
                     <a href="{% url 'display:project_delete' project.pk %}" class="btn btn-outline-danger">Delete</a>
                 {% endif %}
+
+                {% if is_developer %}
+                    <a href="{% url 'display:project_update' project.pk %}" class="btn btn-outline-warning me-md-2">Edit</a>
+                {% endif %}
+
+                {% if is_admin %}
+                    <a href="{% url 'project_insights' project_id=project.pk %}" class="btn btn-outline-info me-md-2">AI Insights</a>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -10,17 +10,38 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load variables from .env file
+
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+if GROQ_API_KEY is None:
+    raise ValueError("GROQ_API_KEY environment variable is not set.")
+
+
+#  Langchain API Key
+os.environ["LANGCHAIN_API_KEY"]=os.getenv("LANGCHAIN_API_KEY")
+os.environ["LANGCHAIN_PROJECT"]=os.getenv("LANGCHAIN_PROJECT")
+os.environ["LANGCHAIN_TRACING_V2"]="true"
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4bick9qz*d8$iy05g@sp=tb=vz1ds(-xm2r9ep&2#hwx1c+v6-"
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+# gmail app password
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,8 +63,24 @@ INSTALLED_APPS = [
     'users',
     'rest_framework.authtoken',
     'display',
+    'ai',
+    'notifications',
 
 ]
+
+# Email settings
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'hathulkrishnanvastgdsc@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+
+
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -137,3 +174,4 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',  # Global default
     ],
 }
+

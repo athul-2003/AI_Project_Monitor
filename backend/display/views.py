@@ -5,6 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import RegisterForm, LoginForm, ProjectForm
 from projects.models import Project
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from notifications.emails import send_project_assignment_email, handle_project_update_emails
+
+
 
 # Existing views for register, login, logout remain unchanged
 def register_view(request):
@@ -39,27 +43,39 @@ def logout_view(request):
     logout(request)
     return redirect('display:login')
 
+
 @login_required
 def project_create_view(request):
-    # Check if user is a developer (developers can't create projects)
     is_developer = request.user.groups.filter(name='Developers').exists()
     if is_developer:
         messages.error(request, "You do not have permission to create projects.")
         return redirect('display:project_list')
-    
+
     if request.method == 'POST':
         form = ProjectForm(request.POST, current_user=request.user)
         if form.is_valid():
             project = form.save(commit=False)
+            
+            assigned_by = request.user # get who assigned project
+
             # If not admin, set the manager to the logged-in user
             if not request.user.is_superuser:
                 project.user = request.user
+
             project.save()
+            form.save_m2m()  # for any M2M fields
+
+            # ✅ Send email using utility function
+            if project.assigned_developer:
+                send_project_assignment_email(project.assigned_developer, project, assigned_by)
+
             messages.success(request, f"Project '{project.name}' has been created successfully.")
             return redirect('display:project_list')
     else:
         form = ProjectForm(current_user=request.user)
+
     return render(request, 'display/project_create.html', {'form': form})
+
 
 @login_required
 def project_list_view(request):
@@ -69,15 +85,27 @@ def project_list_view(request):
     
     if is_admin:
         # Admin sees all projects
-        projects = Project.objects.all()
+        projects = Project.objects.all().order_by('-created_at')
+        paginator = Paginator(projects, 6)  # Show 6 projects per page
     elif is_developer:
         # Developers see only projects assigned to them
         projects = Project.objects.filter(assigned_developer=request.user)
+        paginator = Paginator(projects, 6)  # Show 6 projects per page
     else:
         # Managers see only their created projects
         projects = Project.objects.filter(user=request.user)
-    
-    return render(request, 'display/project_list.html', {'projects': projects, 'is_admin': is_admin, 'is_developer': is_developer})
+        paginator = Paginator(projects, 6)  # Show 6 projects per page
+
+    page_number = request.GET.get('page')
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    context = {'projects': projects, 'is_admin': is_admin, 'is_developer': is_developer, 'page_obj': page_obj}
+    return render(request, 'display/project_list.html', context)
 
 @login_required
 def project_detail_view(request, pk):
@@ -97,31 +125,49 @@ def project_detail_view(request, pk):
     
     return render(request, 'display/project_detail.html', {'project': project, 'is_admin': is_admin, 'is_developer': is_developer})
 
+
 @login_required
 def project_update_view(request, pk):
-    # Check user roles
+    project = get_object_or_404(Project, pk=pk)
     is_admin = request.user.is_superuser
+    is_manager = request.user.groups.filter(name='Managers').exists()
     is_developer = request.user.groups.filter(name='Developers').exists()
-    
-    if is_developer:
-        messages.error(request, "You do not have permission to update projects.")
+
+    # Restrict non-admin managers to only their projects
+    if is_manager and not is_admin and project.user != request.user:
+        messages.error(request, "You can only update your assigned projects.")
         return redirect('display:project_list')
-    
-    if is_admin:
-        project = get_object_or_404(Project, pk=pk)
+
+    # Developer can update only certain fields
+    if is_developer:
+        mode = 'developer'
     else:
-        project = get_object_or_404(Project, pk=pk, user=request.user)
+        mode = 'full'
+
+    old_assigned_dev = project.assigned_developer  # 🔁 Store current developer before form save
 
     if request.method == 'POST':
-        form = ProjectForm(request.POST, instance=project, current_user=request.user)
+        form = ProjectForm(request.POST, instance=project, current_user=request.user, mode=mode)
         if form.is_valid():
+            updated_project = form.save(commit=False)
+            updated_project.save()
             form.save()
+
+            # 📤 Refactored email handling
+            handle_project_update_emails(old_assigned_dev, updated_project, request.user, is_developer)
+
             messages.success(request, f"Project '{project.name}' has been updated successfully.")
             return redirect('display:project_detail', pk=project.pk)
     else:
-        form = ProjectForm(instance=project, current_user=request.user)
-    
-    return render(request, 'display/project_update.html', {'form': form, 'project': project, 'is_admin': is_admin})
+        form = ProjectForm(instance=project, current_user=request.user, mode=mode)
+
+    return render(request, 'display/project_update.html', {
+        'form': form,
+        'project': project,
+        'is_admin': is_admin,
+        'is_developer': is_developer
+    })
+
 
 @login_required
 def project_delete_view(request, pk):

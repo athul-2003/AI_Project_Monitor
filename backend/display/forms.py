@@ -43,16 +43,25 @@ class ProjectForm(forms.ModelForm):
     )
     class Meta:
         model = Project
-        fields = ['name', 'description','user','assigned_developer','deadline','current_status','estimated_budget','current_budget',]
+        fields = ['name', 'description','user','assigned_developer','deadline','current_status','estimated_budget','current_budget','progress_updates','errors']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('current_user', None)
+        mode = kwargs.pop('mode', 'full')  # full or developer
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
             # if field.name == 'description':
             #     field.widget.attrs.update({'rows': 4})
+
         # Only admins can edit the manager field
         if user and not user.is_superuser:
             self.fields.pop('user')
+
+        # Restrict fields for developers
+        if mode == 'developer':
+            allowed = ['progress_updates', 'errors']
+            for field_name in list(self.fields.keys()):
+                if field_name not in allowed:
+                    self.fields.pop(field_name)
         

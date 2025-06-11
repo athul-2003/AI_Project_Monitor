@@ -24,5 +24,6 @@ urlpatterns = [
     path('api/', include('projects.urls')),  # Include your API routes
     path('api/auth/', include('users.urls')),
     path('display/', include('display.urls')),
+    path('ai/', include('ai.urls')),  # summary and suggestions
     
 ]

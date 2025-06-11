@@ -2,4 +2,8 @@
 .env
 
 # Ignore virtual environments
-venv/
+env/
+
+
+# test files
+test/

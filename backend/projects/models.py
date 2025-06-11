@@ -6,6 +6,7 @@ CURRENT_STATUS = [
     ("ON-HOLD", "On Hold"),
     ("COMPLETED", "Completed"),
     ("IN-PROGRESS", "In Progress"),
+    ('delayed', 'Delayed'),
 ]
 
 class Project(models.Model):
@@ -21,6 +22,8 @@ class Project(models.Model):
     )
     estimated_budget = models.FloatField()
     current_budget = models.FloatField()
+    progress_updates = models.TextField(blank=True, help_text="Latest updates on project progress.")
+    errors = models.TextField(blank=True, help_text="Any errors, blockers, or issues encountered.")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
