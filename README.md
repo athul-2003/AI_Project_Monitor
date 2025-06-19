@@ -129,4 +129,13 @@ Multi-agent architecture powered by **CrewAI**:
 This project was developed as part of my internship and has been submitted as the final project for the same.  
 It is intended for academic and evaluation purposes only. Licensing terms can be defined if the project is extended or reused in the future.
 
+---
+
+## 🤝 Connect with Me
+
+If you found this project interesting or have any feedback, feel free to connect!
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/athulkrishnan-h)
+
+
 
