@@ -10,8 +10,9 @@
 - [🛠️ Tech Stack](#️-tech-stack)
 - [🧑‍💼 User Roles](#-user-roles)
 - [🎯 Project Objectives](#-project-objectives)
-- [📊 AI-Powered Insights](#-ai-powered-insights)
+- [📂 Project Structure](#-project-structure)
 - [📄 License](#-license)
+- [🤝 Connect with Me](#-connect-with-me)
 
 ---
 
@@ -121,6 +122,91 @@ Multi-agent architecture powered by **CrewAI**:
   <img src="https://img.shields.io/badge/CrewAI-purple?style=for-the-badge" />
 </p>
 
+---
+
+## 📂 Project Structure
+
+```
+ai_project_monitor/
+│
+├── .gitignore
+├── README.md
+│
+├── backend/
+│   ├── __init__.py
+│   ├── .env
+│   ├── db.sqlite3
+│   ├── manage.py
+│   ├── requirements.txt
+│   │
+│   ├── ai/
+│   │   ├── __init__.py
+│   │   ├── ai_utils.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── urls.py
+│   │   ├── views.py
+│   │   └── templates/
+│   │   └── ...
+│   │
+│   ├── ai_suite/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── api_view.py
+│   │   ├── apps.py
+│   │   ├── crew_ai_assistant.py
+│   │   ├── views.py
+│   │   └── ...
+│   │
+│   ├── backend/
+│   │   ├── asgi.py
+│   │   └── ...
+│   │
+│   ├── display/
+│   │   ├── __init__.py
+│   │   ├── views.py
+│   │   ├── forms.py
+│   │   ├── templates/
+│   │   │   └── display/
+│   │   │       ├── base.html
+│   │   │       ├── project_list.html
+│   │   │       ├── project_create.html
+│   │   │       ├── project_detail.html
+│   │   │       ├── project_update.html
+│   │   │       ├── project_delete_confirm.html
+│   │   │       ├── project_log.html
+│   │   │       ├── task_form.html
+│   │   │       └── register.html
+│   │   └── ...
+│   │
+│   ├── notifications/
+│   │   ├── __init__.py
+│   │   ├── emails.py
+│   │   └── ...
+│   │
+│   ├── projects/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   ├── migrations/
+│   │   └── ...
+│   │
+│   │
+│   └── users/
+│       ├── __init__.py
+│       └── ...
+```
+
+**Key Folders:**
+- `backend/ai/` – AI logic, utilities, and insights.(langchain, groq)
+- `backend/ai_suite/` – Advanced AI crew/assistant logic.(crewai)
+- `backend/display/` – Views, forms, and templates for the web UI.
+- `backend/projects/` – Project/task models, serializers, and migrations.
+- `backend/notifications/` – Email and notification logic.
+- `backend/users/` – User management.
 
 ---
 
