@@ -1,0 +1,46 @@
+{% extends "display/base.html" %}
+
+{% block title %}Project Log - {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Project Log - {{ project.name }}</h2>
+        <a href="{% url 'display:project_detail' project.id %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Project
+        </a>
+    </div>
+
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    {{ task.title }} - Assigned to: {{ task.assigned_developer.username|default:"Unassigned" }}
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> {{ task.status }}</p>
+                    <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                    {% comment %} <p><strong>Progress:</strong> {{ task.progress_updates|default:"No updates" }}</p> {% endcomment %}
+
+                    <h5>Comments:</h5>
+                    {% if task.comment_list %}
+                        <ul>
+                            {% for comment in task.comment_list %}
+                                <li>
+                                    <strong>{{ comment.user.username }}</strong> 
+                                    ({{ comment.created_at|date:"M d, Y H:i" }}): 
+                                    {{ comment.content }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No comments.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No tasks found for this project.</p>
+    {% endif %}
+</div>
+{% endblock %}

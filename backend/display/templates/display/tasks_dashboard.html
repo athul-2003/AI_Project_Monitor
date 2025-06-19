@@ -1,0 +1,97 @@
+{% extends "display/base.html" %}
+
+{% block title %}My Tasks{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn">
+        {% if is_developer %}
+            <h2>My Assigned Tasks</h2>
+        {% else %}
+            <h2>Tasks Assigned</h2>
+        {% endif%}
+        <a href="{% url 'display:project_list' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Back to projects
+        </a>
+    </div>
+
+    {% if page_obj.object_list %}
+        <div class="row">
+            {% for task in page_obj.object_list %}
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            {{ task.title }} (Project: {{ task.project.name }})
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Status:</strong> {{ task.status }}</p>
+                            {% if is_developer %}
+                                <p><strong>Assigned By:</strong> {{ task.project.user.username}}</p>
+                            {% else %}
+                                <p><strong>Assigned Dev:</strong> {{ task.assigned_developer}}</p>
+                            {% endif %}
+                            <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                            {% comment %} <p><strong>Updates:</strong> {{ task.progress_updates|default:"No updates" }}</p> {% endcomment %}
+                            <p><strong>Updated at:</strong> {{ task.updated_at|default:"No updates" }}</p>
+                            <a href="{% url 'display:task_detail' task.id %}" class="btn btn-sm btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                    </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <p class="text-muted">No tasks assigned.</p>
+    {% endif %}
+</div>
+{% endblock %}

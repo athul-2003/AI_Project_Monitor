@@ -1,0 +1,37 @@
+{% extends "display/base.html" %}
+{% block title %}Login | AI Project Monitor{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow animate__animated animate__fadeIn">
+            <div class="card-body p-5">
+                <h3 class="mb-4 text-center">Welcome Back</h3>
+                <p class="text-center text-muted-custom mb-4">Sign in to access your projects.</p>
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="form-text text-danger">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100 py-3 mt-2">Sign In</button>
+                </form>
+                <div class="text-center mt-4">
+                    <span class="text-muted-custom">Don't have an account?</span> 
+                    <a href="{% url 'display:register' %}" class="fw-semibold text-decoration-none">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

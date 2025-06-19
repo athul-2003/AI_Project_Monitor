@@ -1,0 +1,34 @@
+{% extends "display/base.html" %}
+{% block title %}Register | AI Project Monitor{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow animate__animated animate__fadeIn">
+            <div class="card-body p-5">
+                <h3 class="mb-4 text-center">Create Account</h3>
+                <p class="text-center text-muted-custom mb-4">Join us to manage your AI projects seamlessly.</p>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted-custom">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="form-text text-danger">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100 py-3 mt-2">Register Now</button>
+                </form>
+                <div class="text-center mt-4">
+                    <span class="text-muted-custom">Already have an account?</span> 
+                    <a href="{% url 'display:login' %}" class="fw-semibold text-decoration-none">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
