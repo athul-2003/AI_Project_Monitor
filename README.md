@@ -135,7 +135,7 @@ It is intended for academic and evaluation purposes only. Licensing terms can be
 
 If you found this project interesting or have any feedback, feel free to connect!
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/athulkrishnan-h)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/h-athulkrishnan/)
 
 
 
