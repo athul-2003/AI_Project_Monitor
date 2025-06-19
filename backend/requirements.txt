@@ -2,10 +2,9 @@ Django
 djangorestframework
 langchain
 python-dotenv
-pydantic
 langchain-groq
 langchain-community
-
+crewai
 
 
 

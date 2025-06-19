@@ -17,13 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-# from backend import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('projects.urls')),  # Include your API routes
+    path('api/', include('projects.urls')),  
     path('api/auth/', include('users.urls')),
+
     path('display/', include('display.urls')),
-    path('ai/', include('ai.urls')),  # summary and suggestions
-    
+    path('ai/', include('ai.urls')),  # summary and suggestions, even for api ai summary
+    path('ai-suite/', include('ai_suite.urls')), # ai suite for admins (crewai report)
+ 
 ]

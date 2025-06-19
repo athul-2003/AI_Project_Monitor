@@ -12,16 +12,35 @@
                 My Projects - {{ user.username }}
             {% endif %}
         </h2>
-        {% if not is_developer %}
-            <a href="{% url 'display:project_create' %}" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>New Project</a>
-        {% endif %}
+        <div>
+            {% if not is_developer%}
+                <a href="{% url 'display:project_create' %}" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>New Project</a>
+                <a href="{% url 'ai_suite_view' %}" class="btn btn-light border rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                    🧠 AI Crew</a>
+
+            {% else%}
+                <a href="{% url 'display:tasks_dashboard' %}" class="btn btn-success"><i class="bi me-2"></i>My Tasks</a>
+            {% endif %}
+        
+        </div>
     </div>
 
-    {% if projects %}
+    <!-- Status Filter Form -->
+    <div class="mb-4">
+        <form method="GET" class="d-flex align-items-center">
+            <label for="status" class="me-2">Filter by Status:</label>
+            <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
+                <option value="">All Projects</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {% if page_obj.object_list %}
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% comment %} {% for project in projects %} {% endcomment %}
-                {% for project in page_obj.object_list %}  <!--Pagination-->
-                    
+            {% for project in page_obj.object_list %}
                 <div class="col animate__animated animate__fadeInUp">
                     <div class="card h-100">
                         <div class="card-body">
@@ -35,15 +54,27 @@
                             {% elif is_developer %}
                                 <p class="card-text small text-muted-custom"><strong>Manager:</strong> {{ project.user.username }}</p>
                             {% endif %}
+
+                            <!-- Status Display -->
+                            <p class="card-text small text-muted-custom"><strong>Status:</strong> 
+                                {% if project.current_status == "IN-PROGRESS" or project.current_status == "In Progress" %}In Progress
+                                {% elif project.current_status == "ON-HOLD" or project.current_status == "On Hold" %}On Hold
+                                {% elif project.current_status == "delayed" or project.current_status == "Delayed" %}Delayed
+                                {% elif project.current_status == "COMPLETED" or project.current_status == "Completed" %}Completed
+                                {% endif %}
+                            </p> 
+
                             <!-- Action buttons -->
                             <div class="mt-3 viewBtns">
-                                <a href="{% url 'display:project_detail' project.pk %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a>
-                                <!-- Placeholder for summary link -->
-
                                 {% if is_admin %}
+                                    <a href="{% url 'display:project_detail' pk=project.pk %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a>
                                     <a href="{% url 'project_insights' project_id=project.pk %}" class="btn btn-outline-info btn-sm rounded-pill px-3">AI Insights</a>
+                                {% elif is_developer %}
+                                    <a href="{% url 'display:project_detail' pk=project.pk %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a>
+                                {% else %}
+                                    <a href="{% url 'display:project_detail' project.pk %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a> 
+                                    <a href="{% url 'display:task_create' pk=project.pk %}" class="btn btn-outline-info btn-sm rounded-pill px-3">Create Task</a>
                                 {% endif %}
-                                
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-0 text-muted-custom small">
@@ -54,87 +85,71 @@
                     </div>
                 </div>
             {% endfor %}
-            {% comment %} {% endfor %} {% endcomment %}
         </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if selected_status %}&status={{ selected_status }}{% endif %}" aria-label="First">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_status %}&status={{ selected_status }}{% endif %}" aria-label="Previous">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                    </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_status %}&status={{ selected_status }}{% endif %}" aria-label="Next">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_status %}&status={{ selected_status }}{% endif %}" aria-label="Last">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     {% else %}
         <div class="card shadow text-center p-5 animate__animated animate__fadeIn">
             <div class="card-body">
                 <i class="bi bi-folder-x display-4 text-muted-custom mb-3"></i>
-                <h5>No Projects Yet</h5>
-                {% if is_developer %}
-                    <p class="text-muted-custom">No projects have been assigned to you yet.</p>
+                <h5>No Projects Found</h5>
+                {% if is_developer or is_admin %}
+                    <p class="text-muted-custom">No projects match the selected status or have been assigned to you.</p>
                 {% else %}
-                    <p class="text-muted-custom">Get started by creating your first project!</p>
+                    <p class="text-muted-custom">Get started by creating your first project or try a different filter!</p>
                     <a href="{% url 'display:project_create' %}" class="btn btn-success">Create Project</a>
                 {% endif %}
             </div>
         </div>
     {% endif %}
 </div>
-{% comment %} <div class="text-center">
-        {%if page_obj.has_previous %} {# whether the previous page exists #}
-            <a href="?page=1"><i class="fas fa-angle-double-left"></i> First</a>
-            <a href="?page={{page_obj.previous_page_number}}"><i class="fas fa-angle-left"></i>  Prev</a> {# link to the prev page #}
-        {% endif %}
-        <span>{{page_obj.number}}</span> {# the current page number #}
-      
-        {%if page_obj.has_next %} {# whether the next page exists #}
-            <a href="?page={{page_obj.next_page_number}}">Next  <i class="fas fa-angle-right"></i></a> {# link to the next page #}
-            <a href="?page={{ page_obj.paginator.num_pages }}">Last <i class="fas fa-angle-double-right"></i></a>
-        {% endif %}
-</div> {% endcomment %}
-
-
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-
-        {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1" aria-label="First">
-                    <i class="bi bi-chevron-double-left"></i>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
-            </li>
-        {% endif %}
-
-        <li class="page-item disabled">
-            <span class="page-link">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-            </span>
-        </li>
-
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
-                    <i class="bi bi-chevron-double-right"></i>
-                </a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
-            </li>
-        {% endif %}
-
-    </ul>
-</nav>
-
 {% endblock %}

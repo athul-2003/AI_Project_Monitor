@@ -34,13 +34,13 @@ os.environ["LANGCHAIN_TRACING_V2"]="true"
 
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# gmail app password
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'display',
     'ai',
     'notifications',
+    'ai_suite',
 
 ]
 
@@ -75,6 +76,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hathulkrishnanvastgdsc@gmail.com'
+# gmail app password
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 

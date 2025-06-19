@@ -7,3 +7,7 @@ env/
 
 # test files
 test/
+
+# sample data used to enter into models
+sample_data.py
+

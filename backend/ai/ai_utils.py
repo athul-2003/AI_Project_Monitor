@@ -12,7 +12,7 @@ llm = ChatGroq(
 
 # Define prompt template for summaries and suggestions
 prompt_template = PromptTemplate(
-    input_variables=["title", "description", "status", "deadline", "assigned_developers", "progress", "issues"],
+    input_variables=["title", "description", "status", "deadline", "assigned_developers","tasks", "comments"],
     template="""
     You are an expert AI project management assistant with deep knowledge of project lifecycle, risk assessment, and team coordination. Analyze the following project details thoroughly and provide a detailed, insightful response in the exact format specified below. Focus on actionable insights and practical solutions tailored to the project's current state.
 
@@ -22,11 +22,12 @@ prompt_template = PromptTemplate(
     Status: {status}
     Deadline: {deadline}
     Assigned Developers: {assigned_developers}
-    Progress: {progress}
-    Issues: {issues}
+    Tasks: {tasks}
+    comments : {comments}
+    
 
     Provide:
-    1. A detailed summary of the project's current state (50-100 words), highlighting key aspects such as progress, challenges, and timeline adherence. Assess the overall health of the project.
+    1. A detailed summary of the project's current state (50-100 words), highlighting key aspects such as task progress, challenges, team involvement, and timeline adherence. Assess the overall health of the project.
     2. Three specific, prioritized suggestions to improve the project or get it back on track. Each suggestion should be practical, detailed, and tailored to the project's context (e.g., address specific issues, resource constraints, or team dynamics).
 
     Output Format (follow exactly, no additional text or deviations):

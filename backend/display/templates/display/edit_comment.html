@@ -1,0 +1,13 @@
+{% extends "display/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Edit Comment</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Update</button>
+        <a href="{% url 'display:task_detail' comment.task.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
